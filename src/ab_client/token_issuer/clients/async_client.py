@@ -5,7 +5,7 @@ from collections.abc import AsyncGenerator
 from typing import Any, Dict, Optional, Union
 
 import httpx
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 
 from ..exceptions import HTTPException
 from ..models import *
@@ -18,10 +18,10 @@ class AsyncClient(BaseModel):
     verify: Union[bool, str] = True
     access_token: Optional[str] = None
 
-    def get_access_token(self) -> Optional[str]:
+    async def get_access_token(self) -> Optional[str]:
         return self.access_token
 
-    def set_access_token(self, value: str) -> None:
+    async def set_access_token(self, value: str) -> None:
         self.access_token = value
 
     async def authenticate_run_authenticate_post(
@@ -34,7 +34,7 @@ class AsyncClient(BaseModel):
         headers = {
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
-            "Authorization": f"Bearer { self.get_access_token() }",
+            "Authorization": f"Bearer { await self.get_access_token() }",
         }
 
         query_params: Dict[str, Any] = {}
@@ -85,7 +85,7 @@ class AsyncClient(BaseModel):
         headers = {
             "Content-Type": "application/json",
             "Accept": "text/event-stream",
-            "Authorization": f"Bearer { self.get_access_token() }",
+            "Authorization": f"Bearer { await self.get_access_token() }",
         }
 
         query_params: Dict[str, Any] = {}
